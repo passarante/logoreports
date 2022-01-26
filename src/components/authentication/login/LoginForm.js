@@ -43,6 +43,13 @@ export default function LoginForm() {
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
         localStorage.setItem('@token', token);
 
+        const userData = {
+          email,
+          password
+        }
+
+        localStorage.setItem("@userData", JSON.stringify(userData));
+
         navigate('/dashboard', { replace: true });
       } else {
         alert('Hatalı kullanıcı bilgileri');
