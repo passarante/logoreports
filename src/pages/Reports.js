@@ -1,7 +1,6 @@
 import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
-import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { Link as RouterLink } from 'react-router-dom';
 // material
@@ -9,7 +8,6 @@ import {
   Card,
   Table,
   Stack,
-  Avatar,
   Button,
   Checkbox,
   TableRow,
@@ -19,12 +17,10 @@ import {
   Typography,
   TableContainer,
   TablePagination,
-  Modal,
-  Box
+
 } from '@mui/material';
 // components
 import Page from '../components/Page';
-import Label from '../components/Label';
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
 import { UserListHead, UserListToolbar, UserMoreMenu } from '../components/_dashboard/user';
@@ -34,25 +30,14 @@ import USERLIST from '../_mocks_/user';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
+  { id: 'title', label: 'Rapor Adı', alignRight: false },
+  { id: 'sqlQuery', label: 'SQL Sorgusu', alignRight: false },
+  { id: 'type', label: 'Rapor Tipi', alignRight: false },
+  { id: 'show', label: 'Rapor Göster' },
   { id: '' }
 ];
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 800,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
+
 
 // ----------------------------------------------------------------------
 
@@ -92,6 +77,18 @@ export default function Reports() {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [reports, setReports] = useState([]);
+
+  useEffect(() => {
+
+    const tReports = JSON.parse(localStorage.getItem("@reports"));
+
+    if (tReports) {
+
+      setReports(tReports);
+    }
+  }, [])
 
 
 
@@ -143,9 +140,9 @@ export default function Reports() {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const filteredReports = applySortFilter(reports, getComparator(order, orderBy), filterName);
 
-  const isUserNotFound = filteredUsers.length === 0;
+  const isReportNotFound = filteredReports.length === 0;
 
   return (
     <Page title="User | Minimal-UI">
@@ -178,17 +175,17 @@ export default function Reports() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={reports.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers
+                  {filteredReports
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => {
-                      const { id, name, role, status, company, avatarUrl, isVerified } = row;
-                      const isItemSelected = selected.indexOf(name) !== -1;
+                      const { id, title, sqlQuery, type } = row;
+                      const isItemSelected = selected.indexOf(title) !== -1;
 
                       return (
                         <TableRow
@@ -202,29 +199,23 @@ export default function Reports() {
                           <TableCell padding="checkbox">
                             <Checkbox
                               checked={isItemSelected}
-                              onChange={(event) => handleClick(event, name)}
+                              onChange={(event) => handleClick(event, title)}
                             />
                           </TableCell>
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
-                              <Avatar alt={name} src={avatarUrl} />
+
                               <Typography variant="subtitle2" noWrap>
-                                {name}
+                                {title}
                               </Typography>
                             </Stack>
                           </TableCell>
-                          <TableCell align="left">{company}</TableCell>
-                          <TableCell align="left">{role}</TableCell>
-                          <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
-                          <TableCell align="left">
-                            <Label
-                              variant="ghost"
-                              color={(status === 'banned' && 'error') || 'success'}
-                            >
-                              {sentenceCase(status)}
-                            </Label>
-                          </TableCell>
+                          <TableCell align="left">{sqlQuery}</TableCell>
+                          <TableCell align="left">{type === "table" ? "Tablo" : "Grafik"}</TableCell>
 
+                          <TableCell >
+                            <Button component={RouterLink} to={`/dashboard/reports/show/${id}`}>Göster</Button>
+                          </TableCell>
                           <TableCell align="right">
                             <UserMoreMenu />
                           </TableCell>
@@ -237,7 +228,7 @@ export default function Reports() {
                     </TableRow>
                   )}
                 </TableBody>
-                {isUserNotFound && (
+                {isReportNotFound && (
                   <TableBody>
                     <TableRow>
                       <TableCell align="center" colSpan={6} sx={{ py: 3 }}>

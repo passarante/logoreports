@@ -11,6 +11,7 @@ import User from './pages/User';
 import NotFound from './pages/Page404';
 import Reports from './pages/Reports';
 import AddReport from './pages/AddReport';
+import ReportPage from './pages/ReportPage';
 
 // ----------------------------------------------------------------------
 
@@ -24,6 +25,7 @@ export default function Router() {
         { path: 'app', element: <DashboardApp /> },
         { path: 'reports', element: <Reports /> },
         { path: 'reports/add', element: <AddReport /> },
+        { path: 'reports/show/:id', element: <ReportPage /> },
         { path: 'user', element: <User /> },
         { path: 'products', element: <Products /> },
         { path: 'blog', element: <Blog /> }
