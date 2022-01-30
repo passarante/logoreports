@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
 
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuid } from "uuid";
 // material
 import {
@@ -19,16 +19,28 @@ import ReportForm from '../components/report/ReportForm';
 
 
 
-export default function AddReport() {
+export default function EditReport() {
   const [state, setState] = useState({
     "title": "",
     "sqlQuery": "",
     "type": "table",
     "isLoading": false
-  })
+  });
+
+  const { id } = useParams();
+
+  useEffect(() => {
+    const report = JSON.parse(localStorage.getItem('@reports')).filter(r => r.id === id)[0];
+    if (report) {
+      setState({ ...report, isLoading: false })
+    }
+  }, [id])
+
+
+
   const navigate = useNavigate();
 
-  const handleAddReport = () => {
+  const handleUpdateReport = () => {
 
 
     const { title, sqlQuery, type } = state;
@@ -42,15 +54,18 @@ export default function AddReport() {
       // TODO: Validation
 
       const reportsArr = JSON.parse(localStorage.getItem("@reports")) || [];
+      reportsArr.map(r => {
+        if (r.id === id) {
+          r.title = state.title;
+          r.sqlQuery = state.sqlQuery;
+          r.type = state.type
+        }
 
-      const newReport = {
-        id: uuid(),
-        title,
-        sqlQuery,
-        type
-      }
+        return r;
+      });
 
-      reportsArr.push(newReport);
+
+
 
       localStorage.setItem("@reports", JSON.stringify(reportsArr));
 
@@ -66,7 +81,7 @@ export default function AddReport() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Rapor Ekleme
+            Rapor Düzenleme
           </Typography>
           <Button
             variant="contained"
@@ -78,7 +93,7 @@ export default function AddReport() {
           </Button>
         </Stack>
 
-        <ReportForm state={state} setState={setState} handleAddUpdateReport={handleAddReport} />
+        <ReportForm state={state} setState={setState} handleAddUpdateReport={handleUpdateReport} editMode="true" />
       </Container>
     </Page>
   );

@@ -2,7 +2,7 @@ import { filter } from 'lodash';
 import { Icon } from '@iconify/react';
 import { useEffect, useState } from 'react';
 import plusFill from '@iconify/icons-eva/plus-fill';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 // material
 import {
   Card,
@@ -79,6 +79,7 @@ export default function Reports() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [reports, setReports] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
 
@@ -137,6 +138,14 @@ export default function Reports() {
   const handleFilterByName = (event) => {
     setFilterName(event.target.value);
   };
+
+  const handleDeleteReport = (id) => {
+    const tempReports = reports.filter(r => r.id !== id);
+    localStorage.setItem("@reports", JSON.stringify(tempReports));
+    setReports(tempReports)
+
+  }
+
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
@@ -217,7 +226,7 @@ export default function Reports() {
                             <Button component={RouterLink} to={`/dashboard/reports/show/${id}`}>Göster</Button>
                           </TableCell>
                           <TableCell align="right">
-                            <UserMoreMenu />
+                            <UserMoreMenu onDelete={() => handleDeleteReport(id)} reportId={id} />
                           </TableCell>
                         </TableRow>
                       );
