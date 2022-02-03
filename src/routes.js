@@ -13,6 +13,7 @@ import Reports from './pages/Reports';
 import AddReport from './pages/AddReport';
 import ReportPage from './pages/ReportPage';
 import EditReport from './pages/EditReport';
+import ReportGrid from './pages/ReportGrid';
 
 // ----------------------------------------------------------------------
 
@@ -28,6 +29,7 @@ export default function Router() {
         { path: 'reports/add', element: <AddReport /> },
         { path: 'reports/edit/:id', element: <EditReport /> },
         { path: 'reports/show/:id', element: <ReportPage /> },
+        { path: 'grid/show/:id', element: <ReportGrid /> },
         { path: 'user', element: <User /> },
         { path: 'products', element: <Products /> },
         { path: 'blog', element: <Blog /> }

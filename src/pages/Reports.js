@@ -79,7 +79,7 @@ export default function Reports() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [reports, setReports] = useState([]);
-  const navigate = useNavigate();
+
 
   useEffect(() => {
 
@@ -224,6 +224,7 @@ export default function Reports() {
 
                           <TableCell >
                             <Button component={RouterLink} to={`/dashboard/reports/show/${id}`}>Göster</Button>
+                            <Button component={RouterLink} to={`/dashboard/grid/show/${id}`}>Pivot</Button>
                           </TableCell>
                           <TableCell align="right">
                             <UserMoreMenu onDelete={() => handleDeleteReport(id)} reportId={id} />

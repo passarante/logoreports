@@ -6,7 +6,6 @@ import { Box, Checkbox, TableRow, TableCell, TableHead, TableSortLabel } from '@
 
 
 export default function ReportTableHeader({ headers }) {
-  console.log(headers);
 
   return (
     <TableHead>
